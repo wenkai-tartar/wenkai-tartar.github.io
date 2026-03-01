@@ -69,9 +69,14 @@
 
       .title {
         font-weight: bolder;
+        font-size: 1.24rem;
+        line-height: 1.25;
       }
 
       .author {
+        font-size: 1.08rem;
+        line-height: 1.45;
+
         a {
           border-bottom: 1px dashed var(--global-theme-color);
 
@@ -96,6 +101,11 @@
             border-bottom: 1px dashed var(--global-text-color);
           }
         }
+      }
+
+      .periodical {
+        font-size: 1.08rem;
+        line-height: 1.45;
       }
 
       .links {
@@ -185,4 +195,153 @@
 .citation,
 .citation-number {
   color: var(--global-theme-color);
+}
+
+/* About page publication cards */
+.about-publications-section {
+  width: 100%;
+  margin-top: 2.0rem;
+}
+
+@media (min-width: 576px) {
+  .about-publications-section {
+    width: calc(70% - 1rem);
+  }
+}
+
+.about-publications {
+  .publications {
+    margin-top: 1.5rem !important;
+  }
+
+  .publications ol.bibliography li {
+    border: 1px solid var(--global-divider-color);
+    border-radius: 20px;
+    padding: 1.15rem 1.2rem;
+    margin-bottom: 1rem;
+    background-color: transparent;
+    width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    transition:
+      transform 180ms ease,
+      box-shadow 180ms ease,
+      border-color 180ms ease,
+      background-color 180ms ease;
+    will-change: transform;
+  }
+
+  .publications ol.bibliography li:hover {
+    transform: translateY(-4px);
+    border-color: color-mix(in oklab, var(--global-theme-color) 38%, var(--global-divider-color));
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+  }
+
+  .publications ol.bibliography li .row {
+    width: 100%;
+    align-items: center;
+  }
+
+  .publications ol.bibliography li .row > div:last-child {
+    padding-left: 2.0rem;
+  }
+
+  .publications ol.bibliography li .title {
+    font-size: 1.26rem;
+    line-height: 1.2;
+    font-weight: 550 !important;
+    margin-bottom: 0.5rem;
+    word-break: break-word;
+  }
+
+  .publications ol.bibliography li .title .publication-title-link {
+    color: var(--global-text-color);
+    text-decoration: none;
+    border-bottom: none;
+    transition:
+      color 180ms ease,
+      transform 180ms ease;
+    display: inline-block;
+  }
+
+  .publications ol.bibliography li .title .publication-title-link:hover {
+    color: var(--global-theme-color);
+    text-decoration: none;
+    border-bottom: none;
+    transform: translateX(2px);
+  }
+
+  .publications ol.bibliography li .author {
+    font-size: 1rem;
+    color: var(--global-text-color);
+    line-height: 1.4;
+    margin-bottom: 0.45rem;
+  }
+
+  .publications ol.bibliography li .author > em {
+    font-style: normal;
+    font-weight: 500 !important;
+    color: var(--global-text-color);
+    border-bottom: none;
+  }
+
+  .publications ol.bibliography li .author a {
+    color: inherit;
+    border-bottom: none;
+    text-decoration: none;
+  }
+
+  .publications ol.bibliography li .periodical {
+    font-size: 1rem;
+    font-style: italic;
+    color: var(--global-theme-color);
+    margin-bottom: 0.35rem;
+  }
+
+  .publications ol.bibliography li .periodical a {
+    color: var(--global-theme-color) !important;
+    text-decoration: none;
+  }
+
+  .publications ol.bibliography li .periodical em {
+    color: var(--global-theme-color) !important;
+  }
+
+  .publications ol.bibliography li .periodical a em {
+    color: var(--global-theme-color) !important;
+  }
+
+  .publications ol.bibliography li .periodical a:hover {
+    color: var(--global-theme-color) !important;
+    text-decoration: underline;
+  }
+
+  .publications ol.bibliography li .links {
+    margin-top: 0.2rem;
+  }
+
+  .publications ol.bibliography li .links a.btn {
+    border: 0;
+    padding: 0;
+    margin-right: 0.5rem;
+    color: var(--global-theme-color);
+    font-size: 0.95rem;
+    font-weight: 500;
+    text-transform: none;
+  }
+
+  .publications ol.bibliography li .links a.btn:hover {
+    text-decoration: underline;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .about-publications .publications ol.bibliography li {
+    transition: none;
+  }
+
+  .about-publications .publications ol.bibliography li:hover {
+    transform: none;
+  }
 }

@@ -178,6 +178,8 @@ ul.task-list input[type="checkbox"] {
     font-size: 4rem;
 
     a {
+      color: var(--global-text-color);
+
       img {
         width: 3.2rem;
         height: 3.2rem;
@@ -202,9 +204,10 @@ ul.task-list input[type="checkbox"] {
 
       &:hover {
         text-decoration: none;
+        color: var(--global-text-color);
 
         i::before {
-          color: var(--global-theme-color);
+          color: var(--global-text-color);
         }
       }
     }
