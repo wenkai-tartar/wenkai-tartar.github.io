@@ -1,0 +1,11 @@
+metadata:
+  last_updated: '2026-03-04'
+papers:
+  de5NVXYAAAAJ:d1gkVwhDpl0C:
+    citations: 0
+    title: "N\xFCwa: Efficient Generative Control Plane for AI Network Simulation"
+    year: '2025'
+  de5NVXYAAAAJ:u-x6o8ySG0sC:
+    citations: 1
+    title: 'S2: A Distributed Configuration Verifier for Hyper-Scale Networks'
+    year: '2025'
