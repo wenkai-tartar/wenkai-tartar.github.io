@@ -5,6 +5,17 @@ title: Service
 description:
 nav: true
 nav_order: 3
+_styles: |
+  .post article h2 {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 1.25rem;
+  }
+  .post article ul {
+    font-size: 1.5rem;
+    line-height: 1.9;
+    padding-left: 2rem;
+  }
 ---
 
 ## Artifact Evaluation Committee
