@@ -9,11 +9,11 @@ _styles: |
   .post article h2 {
     font-size: 2rem;
     font-weight: 600;
-    margin-bottom: 1.25rem;
+    margin-bottom: 1rem;
   }
   .post article ul {
-    font-size: 1.5rem;
-    line-height: 1.9;
+    font-size: 1.25rem;
+    line-height: 1.65;
     padding-left: 2rem;
   }
 ---
