@@ -8,6 +8,9 @@ _site
 .sass-cache
 .tweet-cache
 .venv
+.wrangler/
+.dev.vars*
+private-analytics/exports/
 assets/libs/
 assets/rendercv/rendercv_output/*.typ
 Gemfile.lock

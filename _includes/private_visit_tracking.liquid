@@ -1,0 +1,8 @@
+{% if jekyll.environment == 'production' and site.private_visit_endpoint and site.private_visit_endpoint != empty %}
+  <script
+    defer
+    src="{{ '/assets/js/private-visit-tracking.js' | relative_url | bust_file_cache }}"
+    data-endpoint="{{ site.private_visit_endpoint | escape }}"
+    data-site-origin="{{ site.url | escape }}"
+  ></script>
+{% endif %}

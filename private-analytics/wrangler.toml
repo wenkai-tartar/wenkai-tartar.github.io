@@ -1,0 +1,12 @@
+name = "wenkai-visit-log"
+main = "worker.mjs"
+compatibility_date = "2026-10-12"
+workers_dev = true
+
+[vars]
+SITE_ORIGIN = "https://wenkai-tartar.github.io"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "wenkai-private-visits"
+database_id = "4b776fcb-9471-4df6-9ce9-d9c1d8baa9a1"
