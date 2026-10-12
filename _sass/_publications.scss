@@ -192,6 +192,36 @@
   }
 }
 
+.publications-page {
+  h2.bibliography {
+    color: var(--global-text-color);
+    font-size: 1.3rem;
+    font-weight: 600;
+    text-align: left;
+    border-top: 0;
+    border-bottom: 1px solid var(--global-divider-color);
+    padding-top: 0;
+    padding-bottom: 0.65rem;
+    margin: 2rem 0 1rem;
+
+    &:first-child {
+      margin-top: 0;
+    }
+  }
+
+  ol.bibliography li {
+    margin-bottom: 1.4rem;
+
+    .title {
+      margin-bottom: 0.25rem;
+    }
+
+    .author {
+      margin-bottom: 0.15rem;
+    }
+  }
+}
+
 .citation,
 .citation-number {
   color: var(--global-theme-color);
