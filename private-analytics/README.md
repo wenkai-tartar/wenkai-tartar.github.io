@@ -20,6 +20,7 @@ npx wrangler@latest d1 create wenkai-private-visits
 
 ```bash
 npx wrangler@latest d1 execute wenkai-private-visits --remote --file=schema.sql
+npx wrangler@latest d1 migrations apply wenkai-private-visits --remote
 npx wrangler@latest deploy
 ```
 
@@ -36,6 +37,33 @@ npx wrangler@latest d1 execute wenkai-private-visits --remote --command="SELECT 
 
 `visits` 是逐条明细，`visitors` 是按 IP 汇总的访问次数和首次/末次时间。北京时间可用 `datetime(visited_at, '+8 hours')` 显示。未来版面可从这些表读取数据；公开展示时另做脱敏，不要公开原始 IP。
 
+## 标记自己和别人
+
+在自己的浏览器打开一次 [标记为自己](https://wenkai-tartar.github.io/#visit-owner=self)。浏览器会在本地保存一个 `wenkai-visit-owner` 标记，以后这台浏览器的访问记为“自己”，换网络也有效。页面外观不变，设置完成后 URL 中的标记自动移除。
+
+其他浏览器需要分别设置；清除网站数据或使用隐私窗口后也需要重新设置。取消标记可打开 [取消自己的标记](https://wenkai-tartar.github.io/#visit-owner=other)。不要把“标记为自己”的链接发给访客，否则他们也会把自己的浏览器标记为自己。
+
+`visitor_type` 为 `self`、`other` 或 `unknown`。未标记的普通浏览器为“别人”；旧记录、旧版脚本和无法访问本地存储的浏览器为“未识别”，不会根据 IP 猜测。这个标记只是统计分类，不是身份认证，也不会赋予查询数据库的权限。
+
+查看带中文标记的记录：
+
+```sql
+SELECT visitor_label, ip, country, region, city,
+       datetime(visited_at, '+8 hours') AS beijing_time, path
+FROM labeled_visits
+ORDER BY visited_at DESC
+LIMIT 100;
+```
+
+分别统计自己和别人每个 IP 的次数（同一 IP 下的不同浏览器不会混在一个类别中）：
+
+```sql
+SELECT visitor_label, ip, visit_count,
+       datetime(last_visit_at, '+8 hours') AS last_visit_beijing
+FROM labeled_visitors
+ORDER BY last_visit_at DESC;
+```
+
 采集接口只允许写入，没有公开读取接口。只有具有此 Cloudflare 账号数据库权限的人能查询。账号密码和 API token 不要放进前端或 Git 仓库；数据库 ID 和采集地址不是密码。`private-analytics/` 已从 Jekyll 输出中排除，真实日志不进入 GitHub Pages 或 Git 仓库。
 
 备份请导出到已忽略的本地目录：
@@ -48,7 +76,7 @@ npx wrangler@latest d1 export wenkai-private-visits --remote --output=exports/vi
 ## 统计口径与限制
 
 - 每次加载一个页面计 1 次，包括刷新和自己的访问；同一次事件重复上报不会重复计数。不等于独立人数或访问会话。
-- 不使用 cookie 或持久访客 ID。多人可能共用 IP，同一个人也可能更换 IP。
+- 不使用 cookie 或持久访客 ID。仅用浏览器本地偏好标记“自己”；多人可能共用 IP，同一个人也可能更换 IP。
 - 不收集页面查询参数、片段、来源链接，也不请求浏览器精确位置权限。
 - 浏览器屏蔽脚本、网络失败、后台页面未显示、服务配额耗尽都会导致漏记；不执行 JavaScript 的机器人不会被记录。GitHub Pages 方案无法保证记录每一个 HTTP 访问。
 - `Origin` 校验可阻挡其他网站的浏览器请求，但不是身份认证，外部脚本可伪造上报。关注 Cloudflare 配额；出现滥用时可增加速率限制。

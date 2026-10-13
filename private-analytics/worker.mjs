@@ -45,7 +45,8 @@ export default {
         payload.path.length > 1024 ||
         !payload.path.startsWith("/") ||
         payload.path.startsWith("//") ||
-        /[?#\\\x00-\x1f]/.test(payload.path)
+        /[?#\\\x00-\x1f]/.test(payload.path) ||
+        (payload.visitor_type !== undefined && !["self", "other", "unknown"].includes(payload.visitor_type))
       ) {
         return response(400);
       }
@@ -56,8 +57,8 @@ export default {
     const cf = request.cf || {};
     try {
       await env.DB.prepare(
-        `INSERT INTO visits (event_id, ip, country, region, city, latitude, longitude, timezone, visited_at, path)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT(event_id) DO NOTHING`
+        `INSERT INTO visits (event_id, ip, country, region, city, latitude, longitude, timezone, visited_at, path, visitor_type)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT(event_id) DO NOTHING`
       )
         .bind(
           payload.event_id,
@@ -69,7 +70,8 @@ export default {
           cf.longitude ?? null,
           cf.timezone ?? null,
           new Date().toISOString(),
-          payload.path
+          payload.path,
+          payload.visitor_type ?? "unknown"
         )
         .run();
       return response(204);
