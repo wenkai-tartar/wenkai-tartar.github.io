@@ -36,6 +36,6 @@ social: false # includes social icons at the bottom of the page
 ---
 
 <div style="font-size: 1.1rem; line-height: 1.45;">
-  <p>I am a Master's student in Computer Science and Technology at <a href="https://www.xjtu.edu.cn/" target="_blank" rel="noopener noreferrer">Xi'an Jiaotong University</a>, advised by <a href="https://xjtu-netverify.github.io/people/pzhang/" target="_blank" rel="noopener noreferrer">Prof. Peng Zhang</a>. I received my B.Eng. in Computer Science and Technology from <a href="https://www.lzu.edu.cn/" target="_blank" rel="noopener noreferrer">Lanzhou University</a>.</p>
+  <p>I am a Master's student in Computer Science and Technology at <a href="https://www.xjtu.edu.cn/" target="_blank" rel="noopener noreferrer">Xi'an Jiaotong University</a>. I received my B.Eng. in Computer Science and Technology from <a href="https://www.lzu.edu.cn/" target="_blank" rel="noopener noreferrer">Lanzhou University</a>.</p>
   <p>My research focuses on networking systems, with an emphasis on building faithful and efficient simulation and verification systems for large-scale networks.</p>
 </div>
