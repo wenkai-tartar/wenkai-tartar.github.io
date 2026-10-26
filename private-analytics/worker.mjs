@@ -1,5 +1,58 @@
 const MAX_BODY_BYTES = 2048;
 
+const languageTag = (value) => (typeof value === "string" && value.length <= 64 && /^[a-z0-9]+(?:-[a-z0-9]+)*$/i.test(value) ? value : null);
+
+function browserContext(payload, request) {
+  const ua = request.headers.get("User-Agent")?.slice(0, 512) || null;
+  const os = !ua
+    ? null
+    : /Android/i.test(ua)
+      ? "Android"
+      : /iPhone|iPad|iPod/i.test(ua)
+        ? "iOS/iPadOS"
+        : /Windows/i.test(ua)
+          ? "Windows"
+          : /CrOS/i.test(ua)
+            ? "ChromeOS"
+            : /Macintosh|Mac OS X/i.test(ua)
+              ? "macOS"
+              : /Linux/i.test(ua)
+                ? "Linux"
+                : "Unknown";
+  const browser = !ua
+    ? null
+    : /Edg(?:e|A|iOS)?\//i.test(ua)
+      ? "Edge"
+      : /OPR\/|Opera/i.test(ua)
+        ? "Opera"
+        : /SamsungBrowser\//i.test(ua)
+          ? "Samsung Internet"
+          : /Firefox\/|FxiOS\//i.test(ua)
+            ? "Firefox"
+            : /Chrome\/|CriOS\//i.test(ua)
+              ? "Chrome"
+              : /Safari\//i.test(ua)
+                ? "Safari"
+                : "Unknown";
+  let timezone = null;
+  if (typeof payload.browser_timezone === "string" && payload.browser_timezone.length <= 100) {
+    try {
+      timezone = new Intl.DateTimeFormat("en", { timeZone: payload.browser_timezone }).resolvedOptions().timeZone;
+    } catch {}
+  }
+  const languages = Array.isArray(payload.languages) ? payload.languages.slice(0, 10).map(languageTag).filter(Boolean) : [];
+  const offset = payload.utc_offset_minutes;
+  return [
+    ua,
+    os,
+    browser,
+    languageTag(payload.language),
+    languages.length ? JSON.stringify(languages) : null,
+    timezone,
+    Number.isInteger(offset) && offset >= -840 && offset <= 840 ? offset : null,
+  ];
+}
+
 async function readPayload(request) {
   const reader = request.body?.getReader();
   if (!reader) throw new Error("Missing payload");
@@ -57,8 +110,9 @@ export default {
     const cf = request.cf || {};
     try {
       await env.DB.prepare(
-        `INSERT INTO visits (event_id, ip, country, region, city, latitude, longitude, timezone, visited_at, path, visitor_type)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT(event_id) DO NOTHING`
+        `INSERT INTO visits (event_id, ip, country, region, city, latitude, longitude, timezone, visited_at, path, visitor_type,
+                            user_agent, os, browser, language, languages, browser_timezone, utc_offset_minutes)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT(event_id) DO NOTHING`
       )
         .bind(
           payload.event_id,
@@ -71,7 +125,8 @@ export default {
           cf.timezone ?? null,
           new Date().toISOString(),
           payload.path,
-          payload.visitor_type ?? "unknown"
+          payload.visitor_type ?? "unknown",
+          ...browserContext(payload, request)
         )
         .run();
       return response(204);

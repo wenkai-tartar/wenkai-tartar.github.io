@@ -33,7 +33,17 @@
     if (document.visibilityState !== "visible") return;
     document.removeEventListener("visibilitychange", record);
     try {
-      const payload = JSON.stringify({ event_id: crypto.randomUUID(), path: window.location.pathname, visitor_type: visitorType });
+      const context = {};
+      // Optional browser settings must never prevent the visit itself from being recorded.
+      try {
+        context.language = navigator.language;
+        context.languages = Array.from(navigator.languages || []).slice(0, 10);
+      } catch {}
+      try {
+        context.browser_timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        context.utc_offset_minutes = -new Date().getTimezoneOffset();
+      } catch {}
+      const payload = JSON.stringify({ event_id: crypto.randomUUID(), path: window.location.pathname, visitor_type: visitorType, ...context });
       if (navigator.sendBeacon && navigator.sendBeacon(endpoint, payload)) return;
       fetch(endpoint, {
         method: "POST",

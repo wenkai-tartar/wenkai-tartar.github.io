@@ -2,7 +2,7 @@
 
 采集 Worker 和 D1 数据库已部署，网站端点已配置。GitHub Pages 发布这次改动后开始记录，不会补录以前的访问。
 
-网页外观不变。后台存储每次页面加载的 IP、国家代码、地区、城市、估算经纬度、访客时区、服务器收到请求的 UTC 时间和页面路径。没有位置数据的字段为 NULL。IP 位置不是实际住址，无法得到街道或门牌；VPN、代理和移动网络会影响准确性。
+网页外观不变。后台存储每次页面加载的 IP、国家代码、地区、城市、估算经纬度、IP 推测时区、操作系统与浏览器类别、User-Agent、浏览器首选语言及语言列表、浏览器时区与当前 UTC 偏移、服务器收到请求的 UTC 时间和页面路径。没有位置数据的字段为 NULL。IP 位置不是实际住址，无法得到街道或门牌；VPN、代理和移动网络会影响准确性。
 
 ## 部署一次
 
@@ -72,6 +72,23 @@ ORDER BY last_visit_at DESC;
 mkdir -p exports
 npx wrangler@latest d1 export wenkai-private-visits --remote --output=exports/visits.sql
 ```
+
+## 查看系统、语言和时区
+
+```sql
+SELECT visitor_label, ip, os, browser, language, languages,
+       browser_timezone, utc_offset_minutes, timezone AS ip_timezone,
+       visited_at, path
+FROM labeled_visits
+ORDER BY visited_at DESC
+LIMIT 100;
+```
+
+- `os`、`browser` 根据请求的 `user_agent` 粗略识别，不代表精确版本；浏览器可能隐藏或伪装系统信息（例如 iPad 桌面模式可能显示 macOS）。保留最长 512 字符的 `user_agent` 方便以后分析。
+- `language` 是浏览器首选语言，`languages` 是最多 10 项的语言列表（JSON），不代表国籍或实际位置。
+- `browser_timezone` 是浏览器报告的 IANA 时区，例如 `America/New_York`；`utc_offset_minutes` 是访问时相对 UTC 的分钟偏移（东为正、西为负，包含当时夏令时）。原有 `timezone` 仍是 IP 推测时区，两者分别保存。
+- 历史记录不补填；不可用或无效的字段为 NULL，仍记录访问。新版后端兼容旧前端。
+- 更新时先执行 `npx wrangler@latest d1 migrations apply wenkai-private-visits --remote`，再部署 Worker，最后发布前端。
 
 ## 统计口径与限制
 
